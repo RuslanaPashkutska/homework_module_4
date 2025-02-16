@@ -9,7 +9,7 @@ def total_salary(path):
                     print (f'Incorrect format: {line.strip()}')
                     continue #Skip incorrect line
                 try:
-                    salary = int(parts[1]) #Converter salary to number
+                    salary = float(parts[1]) #Converter salary to number
                     salaries.append(salary)
                 except ValueError:
                     print (f'Invalid salary value: {parts[1]} in line {line.strip() }')
@@ -17,8 +17,11 @@ def total_salary(path):
         if not salaries:
             return 0, 0
 
+
+
         total = sum(salaries)
         average = total / len(salaries)
+
 
         return total, average
 
