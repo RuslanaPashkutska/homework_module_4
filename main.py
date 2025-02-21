@@ -1,5 +1,4 @@
 
-
 '''
 Додаток, який буде працювати з книгою контактів та календарем
 
@@ -22,13 +21,24 @@ commands = """
 4) all - will show all number from the contacts
 5) exit - to exit the application
 """
+def input_error(func):
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except ValueError:
+            return "Give me name and phone please"
+        except KeyError:
+            return "User not found."
+        except IndexError:
+            return "Enter user name."
+    return inner
 
 def parse_input(user_input):
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
     return cmd, *args
 
-
+@input_error
 def add_contact(args):
     if len(args) !=2:
         return "Error! Enter name and phone number."
@@ -54,27 +64,30 @@ def read_contacts():
         pass
     return contacts
 
+@input_error
 def change_contact(args):
     if len(args) !=2:
-        return "Error! Enter name and  new phone number."
+        raise ValueError
     name, phone = args
-    if name in contacts:
-        contacts[name] = phone
-        save_contacts()
-        return f"Contact {name} update"
-    return "Error! Contact not found."
+    if name not in contacts:
+        raise KeyError
+    contacts[name] = phone
+    save_contacts()
+    return f"Contact {name} update"
 
-
+@input_error
 def show_phone(args):
     if len(args) !=1:
-        return "Error! Enter name."
+        raise IndexError
     name = args[0]
-    return contacts.get(name, "Error! Contact not found")
+    if name not in contacts:
+        raise KeyError
+    return contacts[name]
 
+@input_error
 def show_all():
     if not contacts:
         return 'Contact list is empty.'
-
     return "\n".join(f'{name}: {phone}' for name, phone in contacts.items())
 
 
@@ -103,7 +116,6 @@ def main():
             print(show_all())
         else:
             print("Invalid command.")
-
 
 
 if __name__ == "__main__":
